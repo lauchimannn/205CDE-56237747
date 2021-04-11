@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Game Matching | playTGT - Home</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<style>
+		.container {
+			padding: 16px;
+		}
+
+		/* Modal Content/Box */
+		.modal-content {
+			background-color: #fefefe;
+			margin: 5% auto 15% auto;
+			border: 1px solid #888;
+			width: 40%;
+		}
+
+		tr:hover td {
+			background:#2E4053
+		}
+	</style>
+</head>
+
+<header>
+	<p style="padding: 10px 0px 0px 20px">PlayTGT Game Matching</p>
+	<img src="{{ url_for('static', filename='banner.jpg') }}" alt="banner" height="100" width="100%">
+</header>
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+	<!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    	<span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- Links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    	<div class = "col-sm-11" style="padding-left:0">
+	      	<ul class="navbar-nav">
+	        	<li class="nav-item">
+	          		<a class="nav-link" href="{{ url_for('home') }}">Home</a>
+	        	</li>
+	        	<li class="nav-item">
+	          		<a class="nav-link" href="{{ url_for('games') }}">Games</a>
+	       		</li>
+	        	<!-- About Us Dropdown -->
+	        	<li class="nav-item dropdown">
+	          		<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">About Us</a>
+	          		<div class="dropdown-menu">
+	            		<a class="dropdown-item" href="{{ url_for('our_story') }}">Our Story</a>
+	            		<a class="dropdown-item" href="{{ url_for('contact_us') }}">Contact Us</a>
+	          		</div>
+	        	</li>
+	        </ul>
+	    </div>
+        <!-- Login button -->
+		<button id="loginButton" class="login" onclick="document.getElementById('login').style.display='block'" style="width: auto;border-radius: 50px;padding: 5px 18px;background-color: #117A65;">Login
+		</button>
+    </div> <!-- end of Links -->
+</nav>
+<!-- Login modal -->
+<div id="login" class="modal" style="overflow:auto">
+	<form id="loginForm" class="modal-content animate" action="/login" method="post">
+		<div class="imgcontainer">
+		<!-- Close button(x) -->
+			<span onclick="document.getElementById('login').style.display='none'" class="close" title="Close Modal">&times;</span>
+			<!-- Avatar -->
+			<img src="{{ url_for('static', filename='avatar.png') }}" alt="Avatar" class="avatar">
+		</div>
+    	<div class="container">
+			<label style="color: black" for="uname"><b>Username</b></label>
+			<input type="text" placeholder="Enter Username/Email" name="uname" id="uname" required>
+			<label style="color: black" for="pw"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" name="pw" id="pw" required>
+			<!-- Login button -->  
+			<div style="text-align: center">
+				<input class="login" type="submit" style="border-radius: 9px;padding: 10px 20px;background-color: #117A65;" value="Login">
+			</div>	
+		</div>
+	    <!-- Forgot password & Create AC -->
+	    <div class="container" style="background-color:#f1f1f1">
+	    	<div style="color: black">Don't have an account? <a href="{{ url_for('createAC') }}">Create here</a></div>
+	    	<span class="psw"><a href="{{ url_for('forgotPW') }}">Forgot password?</a></span>
+	    </div>
+  	</form>
+</div> <!-- end of Login Modal -->
+
+<body>
+	<!-- flash messages -->
+	{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			{% for category, message in messages %}
+				<div class="alert alert-{{ category }} alert-dismissible" role="alert" >
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					{{message}}
+				</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+
+	<!-- Search and filter -->
+	<div class="search-container" style="padding-left:30px;padding-right:30px">
+		<input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search..">
+	</div>
+	<!-- Room Table -->
+	<table id = "roomTable" style="margin:10px auto 0px auto; width:95%; text-align:center">
+		<thead>
+			<tr >
+				<th>Room no.</th>
+				<th>Host</th>
+				<th>Title</th>
+				<th>Game</th>
+				<th>Language</th>
+				<th>No. of people</th>
+				<th>Created since</th>
+			</tr>
+		</thead>
+		{% set count = namespace(value=0) %}
+		{% for room in range(total_room) %}
+		<tr style="height:50px;">
+			<td>{{room_list[count.value]}}</td>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			<td>{{num_of_ppl_list[room]}}</td>
+			{% set count.value = count.value + 3 %}
+			<td>{{room_list[count.value]}}</td>
+		</tr>
+		{% set count.value = count.value + 1 %}
+		{% endfor %}
+	</table> <!-- end of Room Table -->
+</body>
+<footer>
+	<!-- Copyright -->
+		<div class="footer-copyright text-center py-3">@ 2021 Copyright: playTGT</div>
+</footer>
+
+<script>
+	// get login modal
+	var modal = document.getElementById('login');
+	// when player clicks anywhere outside of login modal, close it
+	window.onclick = function(event) {
+	    if (event.target == modal) {
+	        modal.style.display = "none";
+	    }
+	};
+
+	// search and filter
+	function filterTable(event) {
+	    var filter = event.target.value.toUpperCase();
+	    var rows = document.querySelector("#roomTable tbody").rows;
+	    
+	    for (var i = 0; i < rows.length; i++) {
+	        var firstCol = rows[i].cells[0].textContent.toUpperCase();
+	        var secondCol = rows[i].cells[1].textContent.toUpperCase();
+	        var thirdCol = rows[i].cells[2].textContent.toUpperCase();
+	        var fourthCol = rows[i].cells[3].textContent.toUpperCase();
+			var fifthCol = rows[i].cells[4].textContent.toUpperCase();
+
+	        if (firstCol.indexOf(filter) > -1 || secondCol.indexOf(filter) > -1 || thirdCol.indexOf(filter) > -1 || fourthCol.indexOf(filter) > -1 || fifthCol.indexOf(filter) > -1) {
+	            rows[i].style.display = "";
+	        } else {
+	            rows[i].style.display = "none";
+	        }      
+	    }
+	}
+	document.querySelector('#searchInput').addEventListener('keyup', filterTable, false);
+</script>
+</html>

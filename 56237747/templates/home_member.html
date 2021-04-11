@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Game Matching | playTGT - Home</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<style>
+		input.joinButton {
+			background:#76448A;
+			width: 100%;
+			height: 100%;
+		}
+
+		input.joinButton:hover {
+			background:#9B59B6;
+		}
+
+		tr:hover td {
+			background:#2E4053
+		}
+
+		input.createRoom {
+			background-color: #FAD7A0;
+			color: black;
+			width: 150px;
+			height: 40px;
+			border: 2px solid #F8C471;
+			font-size:18px;
+			font-weight: bold;
+			display: none;
+		}
+
+		input.createRoom:hover {
+			background-color: #FDEBD0;
+		}
+	</style>
+</head>
+
+<header>
+	<p style="padding: 10px 0px 0px 20px">PlayTGT Game Matching</p>
+	<img src="{{ url_for('static', filename='banner.jpg') }}" alt="banner" height="100" width="100%">
+</header>
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+	<!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    	<span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- Links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    	<div class = "col-sm-10" style="padding-left:0">
+	      	<ul class="navbar-nav">
+	        	<li class="nav-item">
+	          		<a class="nav-link" href="{{ url_for('home') }}">Home</a>
+	        	</li>
+	        	<li class="nav-item">
+	          		<a class="nav-link" href="{{ url_for('games') }}">Games</a>
+	       		</li>
+	        	<!-- About Us Dropdown -->
+	        	<li class="nav-item dropdown">
+	          		<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">About Us</a>
+	          		<div class="dropdown-menu">
+	            		<a class="dropdown-item" href="{{ url_for('our_story') }}">Our Story</a>
+	            		<a class="dropdown-item" href="{{ url_for('contact_us') }}">Contact Us</a>
+	          		</div>
+	        	</li>
+	        </ul>
+	    </div>
+	    <!-- member button -->
+	    <a href="{{ url_for('member') }}">
+		<button id="memberButton" class="login" style="border-radius: 50px;background-color: transparent; width:auto"><img src="{{ url_for('static', filename='icon4.png') }}"></button>
+		</a>
+		<!-- logout button -->
+		<form action="/logout">
+			<input id="logoutButton" type="submit" class="login" value="Logout" style="width: auto;border-radius: 50px;padding: 5px 18px;background-color: #117A65;">
+		</form>
+
+    </div> <!-- end of Links -->
+</nav>
+
+<body>
+	<!-- Search and filter -->
+	<div class="search-container" style="padding-left:30px;padding-right:30px">
+		<input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Search..">
+	</div>
+	<!-- create room button -->
+	<span style="text-align: center">
+		<form class="col-sm-2" style="margin-left:auto;margin-right:auto;padding-bottom:10px;" action = "{{ url_for('create_room') }}">
+			<input id="createRoomButton" class="createRoom" type="submit" value="Create Room">
+		</form>
+	</span>
+	<!-- Room Table -->
+	<table id = "roomTable" style="margin:10px auto 0px auto; width:95%; text-align:center">
+		<thead>
+			<tr >
+				<th>Room no.</th>
+				<th>Host</th>
+				<th>Title</th>
+				<th>Game</th>
+				<th>Language</th>
+				<th>No. of people</th>
+				<th>Created since</th>
+			</tr>
+		</thead>
+		{% set count = namespace(value=0) %}
+		{% set count2 = namespace(value=0) %}
+		{% for room in range(total_room) %}
+		<tr style="height:50px;">
+			<td>{{room_list[count.value]}}</td>
+			<script>
+				// var to assign the room ID in the row to join button
+				var rowRoomID = JSON.parse("{{ room_list[count.value] | tojson }}");
+				var joinButton = document.getElementsByClassName("joinButton"); 
+				var val = JSON.parse("{{ count2.value | tojson }}");
+			</script>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			{% set count.value = count.value + 1 %}
+			<td>{{room_list[count.value]}}</td>
+			<td>{{num_of_ppl_list[room]}}</td>
+			{% set count.value = count.value + 3 %}
+			<td>{{room_list[count.value]}}</td>
+			<td style="border:0;border-right-style:hidden;border-bottom-style:hidden;">
+				<form action="/join" method="post">
+					<input class="joinButton" style="display:none" type="submit" value="Join" onclick="onClickJoinButton(this.name)"/>
+				</form>
+				<script>
+					// assign room ID in the row to the join button
+					joinButton[val].name = rowRoomID;
+				</script>
+				{% set count2.value = count2.value + 1 %}
+			</td>
+		</tr>
+		{% set count.value = count.value + 1 %}
+		{% endfor %}
+	</table> <!-- end of Room Table -->
+</body>
+<footer>
+	<!-- Copyright -->
+	<div class="footer-copyright text-center py-3">@ 2021 Copyright: playTGT</div>
+</footer>
+
+<script>
+	// search and filter
+	function filterTable(event) {
+	    var filter = event.target.value.toUpperCase();
+	    var rows = document.querySelector("#roomTable tbody").rows;
+	    
+	    for (var i = 0; i < rows.length; i++) {
+	        var firstCol = rows[i].cells[0].textContent.toUpperCase();
+	        var secondCol = rows[i].cells[1].textContent.toUpperCase();
+	        var thirdCol = rows[i].cells[2].textContent.toUpperCase();
+	        var fourthCol = rows[i].cells[3].textContent.toUpperCase();
+	        var fifthCol = rows[i].cells[4].textContent.toUpperCase();
+
+	        if (firstCol.indexOf(filter) > -1 || secondCol.indexOf(filter) > -1 || thirdCol.indexOf(filter) > -1 || fourthCol.indexOf(filter) > -1 || fifthCol.indexOf(filter) > -1) {
+	            rows[i].style.display = "";
+	        } else {
+	            rows[i].style.display = "none";
+	        }      
+	    }
+	}
+	document.querySelector('#searchInput').addEventListener('keyup', filterTable, false);
+
+	// show create room & join button if suitable
+	window.onload = function() {
+		var playerRoom = JSON.parse('{{ player_list[1] | tojson }}');
+		var joinButton = document.getElementsByClassName("joinButton");
+		var room_list = JSON.parse('{{ room_list | tojson }}')
+		var num1 = -3;
+		var num2 = -2;
+
+		if (playerRoom == 0) {
+			document.getElementById("createRoomButton").style.display="block";
+			for (n=0, length = joinButton.length; n < length; n++) {
+				var num1 = num1 + 8;
+				var num2 = num2 +8;
+				// don't show join button if the room is full
+				if (room_list[num1] != room_list[num2]) {
+            		document.getElementById("joinButton"+ (n + 1)).style.display="block";
+            	}
+        	}
+		}
+	}
+
+	// add name to 'Join'buttons
+	function addjoinButtonID() {
+        var joinButton = document.getElementsByClassName("joinButton"); 
+
+        for (n=0, length = joinButton.length; n < length; n++) {
+            joinButton[n].id = "joinButton"+ (n + 1); 
+        }
+    }; 
+	addjoinButtonID()
+
+	// pass joined room num to python
+	function onClickJoinButton(val){
+  		$.post( "/returnJoinRoom", {
+    		joinRoom: val
+		});
+	}
+	
+</script>
+</html>

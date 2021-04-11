@@ -1,0 +1,52 @@
+xampp - Apache (httpd.conf)
+AddHandler cgi-script .cgi .pl .asp .py
+
+install mysql-connector-2.2.9 from pypi.org
+cmd pip install mysql-connector
+
+ubantu:
+~/Downloads/Treasure$ python2.7 app.py
+(then cmd will show steps)
+
+window:
+pip install flask
+
+https://www.html5pattern.com/
+https://www.w3schools.com/howto/howto_css_login_form.asp
+https://www.w3schools.com/howto/howto_js_tabs.asp
+https://stackoverflow.com/questions/43622127/filtering-table-multiple-columns
+
+
+<thead>
+			<tr >
+				<th>Room no.</th>
+				<th>Host</th>
+				<th>Game</th>
+				<th>Language</th>
+				<th>No. of people</th>
+				<th>Created since</th>
+				<th></th>
+			</tr>
+		</thead>
+		{% set count = namespace(value=0) %}
+		{% for room in range(total_room) %}
+			{% if room_list[count.value+1] == player_list[3] %}
+			<tr class="clickable-row" data-href="" style="height:50px;">
+				<td>{{room_list[count.value]}}</td>
+				{% set count.value = count.value + 1 %}
+				<td>{{room_list[count.value]}}</td>
+				{% set count.value = count.value + 1 %}
+				<td>{{room_list[count.value]}}</td>
+				{% set count.value = count.value + 1 %}
+				<td>{{room_list[count.value]}}</td>
+				<td>{{num_of_ppl_list[room]}}</td>
+				{% set count.value = count.value + 3 %}
+				<td>{{room_list[count.value]}}</td>
+				<td><a href="#">Join</a></td>
+			</tr>
+			{% set count.value = count.value + 1 %}
+			{% else %}
+				{% set count.value = count.value + 7 %}
+			{% endif %}
+		{% endfor %}
+	</table> <!-- end of Room Table -->
